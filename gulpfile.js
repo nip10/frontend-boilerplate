@@ -26,8 +26,8 @@ const paths = {
     output: 'dist/js/',
   },
   styles: {
-    inputSingle: 'src/scss/styles.{scss,sass}',
-    inputAll: 'src/scss/**/*.{scss,sass}',
+    inputSingle: 'src/scss/styles.s+(a|c)ss',
+    inputAll: 'src/scss/**/*.s+(a|c)ss',
     vendor: 'src/scss/vendor/**/*',
     output: 'dist/css/',
   },
@@ -67,9 +67,11 @@ gulp.task('scripts', () =>
   gulp
     .src(paths.scripts.input)
     .pipe(plumber())
+    .pipe(gulpif(!isProd, sourcemaps.init()))
     .pipe(babel())
     .pipe(concat('app.js'))
     .pipe(gulpif(isProd, uglify()))
+    .pipe(gulpif(!isProd, sourcemaps.write()))
     .pipe(gulp.dest(paths.scripts.output))
     .pipe(gulpif(!isProd, browserSync.stream()))
 );
@@ -77,7 +79,7 @@ gulp.task('scripts', () =>
 const sassPipe = lazypipe()
   .pipe(() => gulpif(!isProd, sourcemaps.init()))
   .pipe(sass)
-  .pipe(autoprefixer, { browsers: 'last 4 versions' })
+  .pipe(autoprefixer, { browsers: ['>0.25%', 'not ie 11', 'not op_mini all'] })
   .pipe(() => gulpif(isProd, cleanCss()))
   .pipe(() => gulpif(!isProd, sourcemaps.write()));
 
@@ -124,7 +126,7 @@ gulp.task('browser-sync', () => {
 
 gulp.task('lint-sass', () =>
   gulp
-    .src([paths.styles.inputAll, !paths.styles.vendor])
+    .src([paths.styles.inputAll, `!${paths.styles.vendor}`])
     .pipe(plumber())
     .pipe(sassLint())
     .pipe(sassLint.format())
