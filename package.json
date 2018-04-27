@@ -6,7 +6,7 @@
   "scripts": {
     "build": "cross-env NODE_ENV=development gulp",
     "serve": "cross-env NODE_ENV=development gulp serve",
-    "start": "cross-env NODE_ENV=production gulp production",
+    "prod": "cross-env NODE_ENV=production gulp production",
     "lint": "eslint src/**"
   },
   "keywords": [
